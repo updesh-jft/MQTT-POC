@@ -1,108 +1,175 @@
-var static_data = [{
-  grad_year: "TOTAL TRANS",
-  student_count: 5
-}, {
-  grad_year: "SUCCESS",
-  student_count: 3
-}, {
-  grad_year: "FAILED",
-  student_count: 2
-}, {
-  grad_year: "SCROW Failed",
-  student_count: 2
-}, {
-  grad_year: "Time our failed",
-  student_count: 2
+const rawData = [
+  {
+    grad_year: "TOTAL TRANS",
+    student_count: 5,
+    "profit": "8342"
+  },
+  {
+    grad_year: "SUCCESS",
+    student_count: 3,
+    "profit": "10342"
+  },
+  {
+    grad_year: "FAILED",
+    student_count: 2,
+    "profit": "15423"
+  },
+  {
+    grad_year: "SCROW ",
+    student_count: 2,
+    "profit": "18432"
+  },
+  {
+    grad_year: "Time Failed",
+    student_count: 2,
+    "profit": "29434"
+  },
+  {
+    grad_year: "Checksum",
+    student_count: 2,
+    "profit": "45343"
+  }
+]
+
+const captions = {
+  student_count: {
+    x: '',
+    y: '',
+  },
+  profit: {
+    x: '',
+    y: '',
+  }
 }
-  , {
-  grad_year: "Checksum failed",
-  student_count: 2
-}];
+const chart = {
+  width: 400,
+  height: 200,
+}
+const margin = {
+  left: 120,
+  right: 50,
+  top: 50,
+  bottom: 100,
+}
+const chartTotalWidth = chart.width + margin.left + margin.right
+const chartTotalHeight = chart.height + margin.top + margin.bottom
 
-function createBarGraph() {
+const getData = (dataType) => rawData.map(d => ({
+  name: d.grad_year,
+  value: +d[dataType],
+}))
+const getCaptions = (dataType) => captions[dataType]
+const t = 'myTransition';
 
-  var tip = d3.select(".chart-container")
-    .append("div")
-    .attr("class", "tip")
-    .style("position", "absolute")
-    .style("z-index", "10")
-    .style("visibility", "hidden");
+const g = d3
+  .select('#chart-area')
+  .append('svg')
+  .attr('width', chartTotalWidth)
+  .attr('height', chartTotalHeight)
+  .attr('viewBox', `0 0 ${chartTotalWidth} ${chartTotalHeight}`)
+  .append('g')
+  .attr('transform', `translate(${margin.left}, ${margin.top})`)
 
-  let svg = d3.select("svg").attr("class", "background-style").attr("id", "bubble");
-  let margin = { top: 20, right: 20, bottom: 42, left: 40 };
-  let width = +svg.attr("width") - margin.left - margin.right;
-  let height = +svg.attr("height") - margin.top - margin.bottom;
+const xLabel = g
+  .append('text')
+  .attr('x', chart.width / 2)
+  .attr('y', chart.height + margin.bottom / 2)
+  .attr('font-size', '20px')
+  .attr('font-weight', 'bold')
+  .attr('text-anchor', 'middle')
 
-  var x = d3.scaleBand().rangeRound([0, width]).padding(0.05),
-    y = d3.scaleLinear().rangeRound([height, 0]);
+const yLabel = g
+  .append('text')
+  .attr('x', -chart.height / 2)
+  .attr('y', -margin.left / 2)
+  .attr('font-size', '20px')
+  .attr('font-weight', 'bold')
+  .attr('transform', 'rotate(-90)')
+  .attr('text-anchor', 'middle')
+// .text('grad_year')
 
-  var g = svg.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+const scaleX = d3
+  .scaleBand()
+  .range([0, chart.width])
+  .paddingInner(0.3)
+  .paddingOuter(0.3)
 
-  d3.json("", function (error, data) {
-    //if (error) throw error;
+const scaleY = d3
+  .scaleLinear()
+  .range([chart.height, 0])
+
+const xAxisGroup = g.append('g').attr('transform', `translate(0, ${chart.height})`)
+const yAxisGroup = g.append('g')
+
+let count = -1
+function update(type) {
+  const selectedDataType = 'student_count';
+  const captions = getCaptions(selectedDataType)
+
+  let data = getData(selectedDataType)
+  if (type === 'new') {
     const recordData = JSON.parse($("#recordData").val());
-    static_data[0].student_count = recordData.total;
-    static_data[1].student_count = recordData.success;
-    static_data[2].student_count = recordData.failed;
-    data = static_data;
+    data[0].value = recordData.total;
+    data[1].value = recordData.success;
+    data[2].value = recordData.failed;
+  }
 
-    x.domain(data.map(function (d) { return d.grad_year; }));
-    y.domain([0, d3.max(data, function (d) { return d.student_count; })]);
+  const xAxisGenerator = d3.axisBottom(scaleX)
+  const yAxisGenerator = d3.axisLeft(scaleY).tickFormat(d => `${d}`)
 
-    g.append("g")
-      .attr("class", "axis axis--x")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x))
-      .append("text")
-      .attr("y", 6)
-      .attr("dy", "2.5em")
-      .attr("dx", width / 2 - margin.left)
-      .attr("text-anchor", "start")
-      .text("TYPE");
+  scaleX.domain(data.map(d => d.name))
+  scaleY.domain([0, d3.max(data.map(d => d.value))])
 
-    g.append("g")
-      .attr("class", "axis axis--y")
-      .call(d3.axisLeft(y).ticks(10))
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "0.71em")
-      .attr("text-anchor", "end")
+  xAxisGroup.transition(t).call(xAxisGenerator)
+  yAxisGroup.transition(t).call(yAxisGenerator)
 
-    g.selectAll(".bar")
-      .data(data)
-      .enter().append("rect")
-      .attr("class", "bar")
-      .attr("id", function (d) { return d.grad_year })
-      .attr("x", function (d) { return x(d.grad_year); })
-      .attr("y", function (d) { return y(d.student_count); })
-      .attr("width", x.bandwidth())
-      .attr("height", function (d) { return height - y(d.student_count) })
-      .on("mouseover", function (d) { return tip.text(d.student_count).style("visibility", "visible").style("top", y(d.student_count) - 13 + 'px').style("left", x(d.grad_year) + x.bandwidth() - 12 + 'px') })
-      // .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
-      .on("mouseout", function () { return tip.style("visibility", "hidden"); });
-  });
+  xLabel.text(captions.x)
+  yLabel.text(captions.y)
+
+  // JOIN new data with old elements
+  const rects = g
+    .selectAll('rect')
+    .data(data, d => d.name)
+
+  // EXIT old elements not present in new data
+  rects.exit()
+    .attr('opacity', 1)
+    .attr('style', 'fill: red')
+    .transition(t)
+    .attr('y', d => scaleY(0))
+    .attr('height', 0)
+    .attr('opacity', 0)
+    .remove()
+
+  rects
+    // ENTER new elements present in new data
+    .enter()
+    .append('rect')
+    .attr('x', d => scaleX(d.name))
+    .attr('y', d => scaleY(0))
+    .attr('width', scaleX.bandwidth)
+    .attr('height', 0)
+    .attr('opacity', 0)
+    // merge new and existing elements
+    .merge(rects)
+    .transition(t)
+    .attr('x', d => scaleX(d.name))
+    .attr('y', d => scaleY(d.value))
+    .attr('height', d => chart.height - scaleY(d.value))
+    .attr('opacity', 1)
 }
 
+update('new')
 
 $(document).ready(function () {
   let socket = io.connect('http://localhost:8000');
   socket.on('message', function (data, json) {
     const isEmpty = Object.keys(json).length === 0;
     if (!isEmpty) {
-      console.log("here")
-      static_data[0].student_count = json.total;
-      console.log("🚀 ~ file: graph.js ~ line 29 ~ json.total", typeof json.total)
-      static_data[1].student_count = json.success;
-      static_data[2].student_count = json.failed;
-      console.log("🚀 ~ file: graph.js ~ line 31 ~ static_data", static_data)
-      // d3.selectAll("#bubble").remove();
-
-      // createBarGraph()
+      rawData[0].student_count = json.total;
+      rawData[1].student_count = json.success;
+      rawData[2].student_count = json.failed;
+      update('updated');
     }
   });
 });
-
-
-createBarGraph();

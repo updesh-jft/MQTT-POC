@@ -52,27 +52,24 @@ const io = require('socket.io')(http);
 io.on('connection', function () {
   io.send('message', {});
 })
-
-
-
-  app.get('/', (req, res) => {
-    let recordData = {
-      total: 0,
-      success: 0,
-      failed: 0
-    };
-    Mqtt.getAllRecords().then((data: any) => {
-      data.forEach((record: any) => {
-        recordData.total += record.total
-        recordData.success += record.success
-        recordData.failed += record.failed
-      })
-      return res.render('graph', { recordData })
-    });
+app.get('/', (req, res) => {
+  let recordData = {
+    total: 0,
+    success: 0,
+    failed: 0
+  };
+  Mqtt.getAllRecords().then((data: any) => {
+    data.forEach((record: any) => {
+      recordData.total += record.total
+      recordData.success += record.success
+      recordData.failed += record.failed
+    })
+    return res.render('graph', { recordData })
   });
-  
-  http.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+});
+
+http.listen(port, () => {
+  console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 })
 
 
