@@ -162,7 +162,7 @@ function update(type) {
 update('new')
 
 $(document).ready(function () {
-  let socket = io.connect('http://localhost:8000');
+  let socket = io.connect('http://mqttapp.teamjft.com/');
   socket.on('message', function (data, json) {
     const isEmpty = Object.keys(json).length === 0;
     if (!isEmpty) {

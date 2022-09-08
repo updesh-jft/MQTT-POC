@@ -39,22 +39,27 @@ myDataSource
   })
 
 client.on('message', async (topic: any, payload: { toString: () => any; }) => {
-  const createRecord = await myDataSource.getRepository(MqttModel).create(JSON.parse(payload.toString()))
-  const results = await myDataSource.getRepository(MqttModel).save(createRecord)
-  const users = await myDataSource.getRepository(MqttModel).find();
-
   let recordData = {
     total: 0,
     success: 0,
     failed: 0
   };
-
-  users.forEach((record: any) => {
-    recordData.total += record.total
-    recordData.success += record.success
-    recordData.failed += record.failed
-  })
-  io.send('message', recordData);
+  const record = await myDataSource.getRepository(MqttModel).find();
+  if (record.length === 0) {
+    const createRecord = await myDataSource.getRepository(MqttModel).create(JSON.parse(payload.toString()))
+    await myDataSource.getRepository(MqttModel).save(createRecord)
+    recordData.total = JSON.parse(payload.toString()).total
+    recordData.success = JSON.parse(payload.toString()).success
+    recordData.failed = JSON.parse(payload.toString()).failed
+    io.send('message', recordData);
+  }
+  else {
+    recordData.total = JSON.parse(payload.toString()).total
+    recordData.success = JSON.parse(payload.toString()).success
+    recordData.failed = JSON.parse(payload.toString()).failed
+    const updateRecord = await myDataSource.getRepository(MqttModel).update(record[0].id,recordData)
+    io.send('message', recordData);
+  }
 });
 
 dotenv.config();
@@ -79,11 +84,9 @@ app.get('/', async (req, res) => {
     failed: 0
   };
   const users = await myDataSource.getRepository(MqttModel).find()
-  users.forEach((record: any) => {
-    recordData.total += record.total
-    recordData.success += record.success
-    recordData.failed += record.failed
-  })
+  recordData.total = users[0] ? users[0].total : 1
+  recordData.success = users[0] ? users[0].success : 1
+  recordData.failed = users[0] ? users[0].failed: 1 
   return res.render('graph', { recordData })
 });
 
