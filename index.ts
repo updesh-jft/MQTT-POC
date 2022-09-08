@@ -31,7 +31,19 @@ client.on('connect', () => {
 
 client.on('message', (topic: any, payload: { toString: () => any; }) => {
   Mqtt.createRecord(JSON.parse(payload.toString())).then((data: any) => {
-    io.send('message', data);
+    Mqtt.getAllRecords().then((data: any) => {
+      let recordData = {
+        total: 0,
+        success: 0,
+        failed: 0
+      };
+      data.forEach((record: any) => {
+        recordData.total += record.total
+        recordData.success += record.success
+        recordData.failed += record.failed
+      })
+      io.send('message', recordData);
+    });
   });
 })
 
@@ -52,6 +64,7 @@ const io = require('socket.io')(http);
 io.on('connection', function () {
   io.send('message', {});
 })
+
 app.get('/', (req, res) => {
   let recordData = {
     total: 0,
