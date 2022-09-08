@@ -1,10 +1,10 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import dbConnection from './config/dbConnection';
-import mqttService from './service/mqttService';
 import path from 'path';
 import mqtt from 'mqtt';
 import { mainContants } from './config/appConfig';
+import { myDataSource } from './config/dbConnection';
+import { MqttModel } from "./mqtt.entity";
 
 const host = mainContants.host;
 const portData = mainContants.portData
@@ -29,31 +29,38 @@ client.on('connect', () => {
   })
 })
 
-client.on('message', (topic: any, payload: { toString: () => any; }) => {
-  Mqtt.createRecord(JSON.parse(payload.toString())).then((data: any) => {
-    Mqtt.getAllRecords().then((data: any) => {
-      let recordData = {
-        total: 0,
-        success: 0,
-        failed: 0
-      };
-      data.forEach((record: any) => {
-        recordData.total += record.total
-        recordData.success += record.success
-        recordData.failed += record.failed
-      })
-      io.send('message', recordData);
-    });
-  });
-})
+myDataSource
+  .initialize()
+  .then(() => {
+    console.log("Data Source has been initialized!")
+  })
+  .catch((err: any) => {
+    console.error("Error during Data Source initialization:", err)
+  })
 
-const Mqtt = new mqttService();
+client.on('message', async (topic: any, payload: { toString: () => any; }) => {
+  const createRecord = await myDataSource.getRepository(MqttModel).create(JSON.parse(payload.toString()))
+  const results = await myDataSource.getRepository(MqttModel).save(createRecord)
+  const users = await myDataSource.getRepository(MqttModel).find();
+
+  let recordData = {
+    total: 0,
+    success: 0,
+    failed: 0
+  };
+
+  users.forEach((record: any) => {
+    recordData.total += record.total
+    recordData.success += record.success
+    recordData.failed += record.failed
+  })
+  io.send('message', recordData);
+});
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
-dbConnection.dbConnect();
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/../views"));
@@ -65,20 +72,19 @@ io.on('connection', function () {
   io.send('message', {});
 })
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   let recordData = {
     total: 0,
     success: 0,
     failed: 0
   };
-  Mqtt.getAllRecords().then((data: any) => {
-    data.forEach((record: any) => {
-      recordData.total += record.total
-      recordData.success += record.success
-      recordData.failed += record.failed
-    })
-    return res.render('graph', { recordData })
-  });
+  const users = await myDataSource.getRepository(MqttModel).find()
+  users.forEach((record: any) => {
+    recordData.total += record.total
+    recordData.success += record.success
+    recordData.failed += record.failed
+  })
+  return res.render('graph', { recordData })
 });
 
 http.listen(port, () => {

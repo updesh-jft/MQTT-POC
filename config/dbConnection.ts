@@ -1,14 +1,12 @@
-import mongoose from 'mongoose';
-const DB_CONFIG = {
-    host: '127.0.0.1',
-    port: 27017,
-    dbName: 'mqtt'
-};
+import { DataSource } from "typeorm"
 
-const dbConnection = {
-    dbConnect() {
-        mongoose.connect(`mongodb://${DB_CONFIG.host}:${DB_CONFIG.port}/${DB_CONFIG.dbName}`);
-    }
-}
-
-export default dbConnection;
+export const myDataSource = new DataSource({
+    type: "mysql",
+    host: "localhost",
+    port: 3306,
+    username: "jftDatabase",
+    password: "blu2@J0ck",
+    database: "mqtt",
+    entities: ["dist/*.js"],
+    synchronize: true,
+})
