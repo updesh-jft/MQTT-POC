@@ -1,34 +1,19 @@
 const rawData = [
   {
     grad_year: "TOTAL TRANS",
-    student_count: 5,
+    student_count: 60,
     "profit": "8342"
   },
   {
     grad_year: "SUCCESS",
-    student_count: 3,
+    student_count: 20,
     "profit": "10342"
   },
   {
     grad_year: "FAILED",
-    student_count: 2,
+    student_count: 30,
     "profit": "15423"
-  },
-  {
-    grad_year: "SCROW ",
-    student_count: 2,
-    "profit": "18432"
-  },
-  {
-    grad_year: "Time Failed",
-    student_count: 2,
-    "profit": "29434"
-  },
-  {
-    grad_year: "Checksum",
-    student_count: 2,
-    "profit": "45343"
-  }
+  } 
 ]
 
 const captions = {
@@ -107,7 +92,7 @@ function update(type) {
   const captions = getCaptions(selectedDataType)
 
   let data = getData(selectedDataType)
-  if (type === 'new') {
+  if (type === 'new' && recordData.length !== 0) {
     const recordData = JSON.parse($("#recordData").val());
     data[0].value = recordData.total;
     data[1].value = recordData.success;

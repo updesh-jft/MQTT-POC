@@ -6,10 +6,46 @@
   height: auto;
   background-color: #fff;
 }
+#chart-area {
+  flex-grow: 2;
+}
+.row {
+  display: flex;
+}
+#chart {
+  align-self: center;
+}
 #chart-area svg rect,
 #chart-area svg text {
   fill: #682d68a3;
 }
 #chart-area svg path {
   stroke: #333;
+}
+
+.pie {
+  margin: 20px;
+}
+
+svg {
+    float: left;
+}
+
+.legend {
+  float: left;
+  font-family: "Verdana";
+  font-size: .7em;
+}
+
+.pie text {
+  font-family: "Verdana";
+  fill: #000;
+}
+
+.pie .name-text{
+  font-size: .8em;
+}
+
+.pie .value-text{
+  font-size: 3em;
 }
