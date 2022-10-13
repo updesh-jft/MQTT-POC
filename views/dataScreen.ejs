@@ -1,0 +1,177 @@
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/dataScreen.css" />
+    <link
+      rel="stylesheet"
+      href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.0/bootstrap-table.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="title">Json Data Screen</div>
+      <form action="/dataScreen" method="POST">
+        <div class="user__details">
+          <div class="input__box">
+            <span class="details">Screen Size</span>
+            <input type="text" name="screenSize" value=<%= jsonData ? jsonData["Screen Size"] : '320x240' %> placeholder="320x240" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Theme</span>
+            <input type="text" name="theme" value=<%= jsonData ? jsonData["Theme"] : 'light' %> placeholder="light" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Top Logo KioSoft Logo</span>
+            <select id="cars" name="kioSoft">
+              <option value="true" <%= jsonData ? jsonData["Top Logo"]["Kiosoft Logo"] === 'true' ? 'selected' : ''  : ''%>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Top Logo"]["Kiosoft Logo"] === 'false' ? 'selected' : '' : ''%>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Top Logo Vendor Logo</span>
+            <select id="cars" name="vendor">
+              <option value="true" <%= jsonData ? jsonData["Top Logo"]["Kiosoft Logo"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Top Logo"]["Kiosoft Logo"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Title String</span>
+            <select id="cars" name="string">
+              <option value="string one" <%= jsonData ? jsonData["Title String"]["String"] === 'string one' ? 'selected' : '' : '' %>>string one</option>
+              <option value="string two" <%= jsonData ? jsonData["Title String"]["String"] === 'string two' ? 'selected' : '' : '' %>>string two</option>
+              <option value="string three" <%= jsonData ? jsonData["Title String"]["String"] === 'string three' ? 'selected' : '' : '' %>>string three</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Button Color</span>
+            <input type="text" name="buttonColor" value=<%= jsonData ? jsonData["Button"][0]["Button Color"] : 'Green' %> placeholder="Green" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Button String</span>
+            <input type="text" name="buttonString" value=<%= jsonData ? jsonData["Button"][0]["Button String"] : 'UPPER #001' %> placeholder="UPPER #001" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Button Color</span>
+            <input type="text" name="buttonColor" value=<%= jsonData ? jsonData["Button"][1]["Button Color"] : 'Green' %> placeholder="Green" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Button String</span>
+            <input type="text" name="buttonString" value=<%= jsonData ? jsonData["Button"][1]["Button String"] : '#001' %> placeholder="UPPER #001" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Machine Info</span>
+            <input type="text" name="machineInfo" value=<%= jsonData ? jsonData["Information"]["Machine Info"] : 'Dryer #001' %> placeholder="Dryer #001" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Reader Type</span>
+            <input type="text" name="readerType" value=<%= jsonData ? jsonData["Information"]["Reader Type"] : 'N' %> placeholder="N" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Network Type</span>
+            <input type="text" name="networkType" value=<%= jsonData ? jsonData["Information"]["Network Type"] : "wifi" %> placeholder="wifi" required />
+          </div>
+          <div class="input__box">
+            <span class="details">Network Signal</span>
+            <input type="text" name="networkSignal" placeholder="3" required value=<%= jsonData ? jsonData["Information"]["Network Signal"] :  '3' %>  />
+          </div>
+          <div class="input__box">
+            <span class="details">Bluetooth</span>
+            <select id="cars" name="bluetooth">
+              <option value="true" <%= jsonData ? jsonData["Information"]["Bluetooth"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Information"]["Bluetooth"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Amex</span>
+            <select id="cars" name="amex">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["amex"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["amex"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Discover</span>
+            <select id="cars" name="discover">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["discover"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["discover"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Intreac</span>
+            <select id="cars" name="intreac">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["intreac"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["intreac"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Master</span>
+            <select id="cars" name="master">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["master"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["master"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Visa</span>
+            <select id="cars" name="visa">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["visa"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["visa"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Apple pay</span>
+            <select id="cars" name="applePay">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["Apple Pay"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["Apple Pay"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Google Pay</span>
+            <select id="cars" name="googlePay">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["Google Pay"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["Google Pay"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Value card</span>
+            <select id="cars" name="valueCard">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["value card"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["value card"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Tap card</span>
+            <select id="cars" name="tapCard">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["tap card"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["tap card"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Mobile app</span>
+            <select id="cars" name="mobileApp">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["Mobile App"] === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["Mobile App"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+          <div class="input__box">
+            <span class="details">Coin</span>
+            <select id="cars" name="coin">
+              <option value="true" <%= jsonData ? jsonData["Bottom Logo"]["coin"]  === 'true' ? 'selected' : '' : '' %>>True</option>
+              <option value="false" <%= jsonData ? jsonData["Bottom Logo"]["coin"] === 'false' ? 'selected' : '' : '' %>>False</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="button">
+          <input type="submit" value="Save Data" />
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

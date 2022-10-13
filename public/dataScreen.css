@@ -17,15 +17,17 @@
 
 body {
   display: flex;
+  /* height: 100vh; */
   justify-content: center; /*center vertically */
-   /* center horizontally */;
-   /* background: linear-gradient(135deg, var(--main-blue), var(--main-purple)); */
-   padding: 10px;
+  align-items: center; /* center horizontally */
+  background: linear-gradient(135deg, var(--main-blue), var(--main-purple));
+  padding: 10px;
 }
 /* container and form */
 .container {
   max-width: 700px;
   width: 100%;
+  background: #fff;
   padding: 25px 30px;
   border-radius: 5px;
 }
@@ -73,7 +75,6 @@ form .user__details .input__box {
   border-bottom-width: 2px;
   transition: all 0.3s ease;
 }
-
 .user__details .input__box select {
   height: 45px;
   width: 100%;
@@ -85,13 +86,10 @@ form .user__details .input__box {
   border-bottom-width: 2px;
   transition: all 0.3s ease;
 }
-
-
 .user__details .input__box input:focus,
 .user__details .input__box input:valid {
   border-color: var(--main-purple);
 }
-
 .user__details .input__box select:focus,
 .user__details .input__box select:valid {
   border-color: var(--main-purple);
@@ -142,7 +140,6 @@ form .button {
   margin: 45px 0px;
   bottom: 50px;
 }
-
 form .button input {
   height: 100%;
   width: 100%;
@@ -155,7 +152,6 @@ form .button input {
   background: linear-gradient(135deg, var(--main-blue), var(--main-purple));
   transition: all 0.3s ease;
 }
-
 form .button select {
   height: 100%;
   width: 100%;
@@ -168,16 +164,12 @@ form .button select {
   background: linear-gradient(135deg, var(--main-blue), var(--main-purple));
   transition: all 0.3s ease;
 }
-
 form .button input:hover {
   background: linear-gradient(-135deg, var(--main-blue), var(--main-purple));
 }
-
 form .button select:hover {
   background: linear-gradient(-135deg, var(--main-blue), var(--main-purple));
 }
-
-
 @media only screen and (max-width: 584px) {
   .container {
     max-width: 100%;

@@ -5,6 +5,10 @@ import mqtt from 'mqtt';
 import { mainContants } from './config/appConfig';
 import { myDataSource } from './config/dbConnection';
 import { MqttModel } from "./mqtt.entity";
+import { JsonDataModel } from "./jsonData.entity";
+import bodyParser from 'body-parser';
+import { json } from './constants/jsonContstant';
+import { generateData } from './services/helperService';
 
 const host = mainContants.host;
 const portData = mainContants.portData
@@ -66,7 +70,7 @@ dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
-
+app.use(bodyParser.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/../views"));
 app.use(express.static(path.join(__dirname, "/../public/")));
@@ -86,9 +90,41 @@ app.get('/', async (req, res) => {
   const users = await myDataSource.getRepository(MqttModel).find()
   recordData.total = users[0] ? users[0].total : 1
   recordData.success = users[0] ? users[0].success : 1
-  recordData.failed = users[0] ? users[0].failed: 1 
+  recordData.failed = users[0] ? users[0].failed : 1
   return res.render('graph', { recordData })
 });
+
+app.get('/dataScreen', async (req, res) => {
+  const dbData = await myDataSource.getRepository(JsonDataModel).find();
+
+  return res.render('dataScreen' , { jsonData : dbData.length !== 0 ? dbData[0].jsonData : ''})
+});
+
+app.get('/jsonData', async (req, res) => {
+  const dbData = await myDataSource.getRepository(JsonDataModel).find();
+
+  return res.send({ jsonData : dbData.length !== 0 ? dbData[0].jsonData : ''})
+});
+
+app.post('/dataScreen', async (req, res) => {
+  const formData = req.body;
+  let objectData: any = json;
+  const dbData = await myDataSource.getRepository(JsonDataModel).find();
+  if(dbData.length === 0)
+  {
+    const dataGenerated = generateData(formData, objectData, dbData);
+    const createRecord = myDataSource.getRepository(JsonDataModel).create({ jsonData: dataGenerated })
+    await myDataSource.getRepository(JsonDataModel).save(createRecord) 
+
+    return res.redirect('/dataScreen');
+  }
+  const dataGenerated = generateData(formData, objectData, dbData[0].jsonData);
+  await myDataSource.getRepository(JsonDataModel).update(dbData[0].id, { jsonData: dataGenerated })
+ 
+  return res.redirect('/dataScreen');
+});
+
+
 
 http.listen(port, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
