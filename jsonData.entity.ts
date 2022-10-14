@@ -5,6 +5,6 @@ export class JsonDataModel {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({ nullable: true, type: 'json'})
+    @Column({ nullable: true, type: 'longtext'})
     jsonData: string;
 }

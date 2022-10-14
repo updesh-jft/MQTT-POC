@@ -95,15 +95,17 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/dataScreen', async (req, res) => {
-  const dbData = await myDataSource.getRepository(JsonDataModel).find();
+  let dbData: any = await myDataSource.getRepository(JsonDataModel).find();
+  const data = dbData.length !== 0 ? JSON.parse(dbData[0].jsonData) : '';
 
-  return res.render('dataScreen' , { jsonData : dbData.length !== 0 ? dbData[0].jsonData : ''})
+  return res.render('dataScreen' , { jsonData : data ? data : ''})
 });
 
 app.get('/jsonData', async (req, res) => {
   const dbData = await myDataSource.getRepository(JsonDataModel).find();
+  const data = dbData.length !== 0 ? JSON.parse(dbData[0].jsonData) : '';
 
-  return res.send(dbData.length !== 0 ? dbData[0].jsonData : '')
+  return res.send(data ? data : {})
 });
 
 app.post('/dataScreen', async (req, res) => {
@@ -113,13 +115,13 @@ app.post('/dataScreen', async (req, res) => {
   if(dbData.length === 0)
   {
     const dataGenerated = generateData(formData, objectData, dbData);
-    const createRecord = myDataSource.getRepository(JsonDataModel).create({ jsonData: dataGenerated })
+    const createRecord = myDataSource.getRepository(JsonDataModel).create({ jsonData: JSON.stringify(dataGenerated) })
     await myDataSource.getRepository(JsonDataModel).save(createRecord) 
 
     return res.redirect('/dataScreen');
   }
   const dataGenerated = generateData(formData, objectData, dbData[0].jsonData);
-  await myDataSource.getRepository(JsonDataModel).update(dbData[0].id, { jsonData: dataGenerated })
+  await myDataSource.getRepository(JsonDataModel).update(dbData[0].id, { jsonData: JSON.stringify(dataGenerated) })
  
   return res.redirect('/dataScreen');
 });
