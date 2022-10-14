@@ -103,7 +103,7 @@ app.get('/dataScreen', async (req, res) => {
 app.get('/jsonData', async (req, res) => {
   const dbData = await myDataSource.getRepository(JsonDataModel).find();
 
-  return res.send({ jsonData : dbData.length !== 0 ? dbData[0].jsonData : ''})
+  return res.send(dbData.length !== 0 ? dbData[0].jsonData : '')
 });
 
 app.post('/dataScreen', async (req, res) => {
