@@ -6,5 +6,5 @@ export class JsonDataModel {
     id: number
 
     @Column({ nullable: true, type: 'json'})
-    jsonData: JSON;
+    jsonData: string;
 }
